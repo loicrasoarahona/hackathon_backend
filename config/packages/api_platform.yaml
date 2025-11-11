@@ -1,0 +1,13 @@
+api_platform:
+    eager_loading:
+        max_joins: 100
+    title: Hello API Platform
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ["Content-Type", "Authorization", "Origin"]
+    formats:
+        jsonld: ["application/ld+json"]
+        json: ["application/json"] # 👈 ajout de ce format
+        html: ["text/html"] # optionnel, si tu veux aussi voir la version HTML
