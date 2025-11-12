@@ -5,16 +5,19 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlacePhotoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PlacePhotoRepository::class)]
 #[ApiResource]
 class PlacePhoto
 {
+    #[Groups(['place:create'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['place:create'])]
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 

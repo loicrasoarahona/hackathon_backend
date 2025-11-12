@@ -34,6 +34,12 @@ class PostPhoto
     #[ORM\ManyToMany(targetEntity: PostPhotoCategory::class, inversedBy: 'photos')]
     private Collection $categories;
 
+    #[ORM\Column(length: 255)]
+    private ?string $location = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $locationLabel = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -100,6 +106,30 @@ class PostPhoto
     public function removeCategory(PostPhotoCategory $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): static
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getLocationLabel(): ?string
+    {
+        return $this->locationLabel;
+    }
+
+    public function setLocationLabel(?string $locationLabel): static
+    {
+        $this->locationLabel = $locationLabel;
 
         return $this;
     }

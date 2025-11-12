@@ -2,27 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiFilter(SearchFilter::class, properties: ['province' => 'exact', 'name' => 'partial'])]
 #[ORM\Entity(repositoryClass: CityRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['city:collection']]),
+        new Get(normalizationContext: ['groups' => ['city:collection']]),
+        new \ApiPlatform\Metadata\Post(denormalizationContext: ['groups' => ['city:collection']]),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ]
+)]
 class City
 {
+    #[Groups(['city:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['city:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['city:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
+    #[Groups(['city:collection'])]
     #[ORM\ManyToOne(inversedBy: 'cities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Province $province = null;
@@ -33,10 +56,11 @@ class City
     #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'city')]
     private Collection $places;
 
+    #[Groups(['city:collection'])]
     /**
      * @var Collection<int, CityPhoto>
      */
-    #[ORM\OneToMany(targetEntity: CityPhoto::class, mappedBy: 'city')]
+    #[ORM\OneToMany(targetEntity: CityPhoto::class, mappedBy: 'city', cascade: ['persist'])]
     private Collection $photos;
 
     /**
@@ -51,12 +75,30 @@ class City
     #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'city')]
     private Collection $products;
 
+    /**
+     * @var Collection<int, Culture>
+     */
+    #[ORM\ManyToMany(targetEntity: Culture::class, mappedBy: 'cities')]
+    private Collection $cultures;
+
+    /**
+     * @var Collection<int, PlaceEvent>
+     */
+    #[ORM\OneToMany(targetEntity: PlaceEvent::class, mappedBy: 'city')]
+    private Collection $placeEvents;
+
+    #[Groups(['city:collection'])]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->places = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->products = new ArrayCollection();
+        $this->cultures = new ArrayCollection();
+        $this->placeEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -213,6 +255,75 @@ class City
         if ($this->products->removeElement($product)) {
             $product->removeCity($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Culture>
+     */
+    public function getCultures(): Collection
+    {
+        return $this->cultures;
+    }
+
+    public function addCulture(Culture $culture): static
+    {
+        if (!$this->cultures->contains($culture)) {
+            $this->cultures->add($culture);
+            $culture->addCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCulture(Culture $culture): static
+    {
+        if ($this->cultures->removeElement($culture)) {
+            $culture->removeCity($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlaceEvent>
+     */
+    public function getPlaceEvents(): Collection
+    {
+        return $this->placeEvents;
+    }
+
+    public function addPlaceEvent(PlaceEvent $placeEvent): static
+    {
+        if (!$this->placeEvents->contains($placeEvent)) {
+            $this->placeEvents->add($placeEvent);
+            $placeEvent->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlaceEvent(PlaceEvent $placeEvent): static
+    {
+        if ($this->placeEvents->removeElement($placeEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($placeEvent->getCity() === $this) {
+                $placeEvent->setCity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PostPhotoCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[ORM\Entity(repositoryClass: PostPhotoCategoryRepository::class)]
+#[ApiFilter(BooleanFilter::class, properties: ['isDisplayable'])]
 #[ApiResource]
 class PostPhotoCategory
 {
@@ -25,6 +30,9 @@ class PostPhotoCategory
      */
     #[ORM\ManyToMany(targetEntity: PostPhoto::class, mappedBy: 'categories')]
     private Collection $photos;
+
+    #[ORM\Column]
+    private ?bool $isDisplayable = null;
 
     public function __construct()
     {
@@ -71,6 +79,18 @@ class PostPhotoCategory
         if ($this->photos->removeElement($photo)) {
             $photo->removeCategory($this);
         }
+
+        return $this;
+    }
+
+    public function isDisplayable(): ?bool
+    {
+        return $this->isDisplayable;
+    }
+
+    public function setIsDisplayable(bool $isDisplayable): static
+    {
+        $this->isDisplayable = $isDisplayable;
 
         return $this;
     }
