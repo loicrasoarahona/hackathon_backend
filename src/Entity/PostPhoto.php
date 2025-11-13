@@ -8,35 +8,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostPhotoRepository::class)]
 #[ApiResource]
 class PostPhoto
 {
+    #[Groups(['post:write'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['post:write'])]
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 
-    #[ORM\ManyToOne(inversedBy: 'photos')]
+    #[ORM\ManyToOne(inversedBy: 'photos', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
+    #[Groups(['post:write'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(['post:write'])]
     /**
      * @var Collection<int, PostPhotoCategory>
      */
     #[ORM\ManyToMany(targetEntity: PostPhotoCategory::class, inversedBy: 'photos')]
     private Collection $categories;
 
+    #[Groups(['post:write'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
+    #[Groups(['post:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationLabel = null;
 

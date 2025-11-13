@@ -3,24 +3,43 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CultureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CultureRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(denormalizationContext: ['groups' => ['culture:create']]),
+        new Patch(),
+        new Put(),
+        new Delete(),
+    ]
+)]
 class Culture
 {
+    #[Groups(['culture:create'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['culture:create'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['culture:create'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
@@ -30,10 +49,11 @@ class Culture
     #[ORM\ManyToMany(targetEntity: City::class, inversedBy: 'cultures')]
     private Collection $cities;
 
+    #[Groups(['culture:create'])]
     /**
      * @var Collection<int, CulturePhoto>
      */
-    #[ORM\OneToMany(targetEntity: CulturePhoto::class, mappedBy: 'culture')]
+    #[ORM\OneToMany(targetEntity: CulturePhoto::class, mappedBy: 'culture', cascade: ['persist'])]
     private Collection $photos;
 
     public function __construct()

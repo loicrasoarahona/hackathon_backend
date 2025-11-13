@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: PlaceRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(),
-        new GetCollection(),
+        new Get(normalizationContext: ['groups' => ['place:collection']]),
+        new GetCollection(normalizationContext: ['groups' => ['place:collection']]),
         new \ApiPlatform\Metadata\Post(
             denormalizationContext: ['groups' => ['place:create']]
         ),
@@ -29,26 +29,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Place
 {
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\ManyToOne(inversedBy: 'places')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
 
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     /**
      * @var Collection<int, PlacePhoto>
      */

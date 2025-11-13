@@ -3,35 +3,56 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['post:write']]),
+        new GetCollection(normalizationContext: ['groups' => ['post:write']]),
+        new \ApiPlatform\Metadata\Post(denormalizationContext: ['groups' => ['post:write']]),
+        new Patch(),
+        new Put(),
+        new Delete(),
+    ]
+)]
 class Post
 {
+    #[Groups(['post:write'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['post:write'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[Groups(['post:write'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?City $city = null;
 
+    #[Groups(['post:write'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Place $place = null;
 
+    #[Groups(['post:write'])]
     /**
      * @var Collection<int, PostPhoto>
      */
-    #[ORM\OneToMany(targetEntity: PostPhoto::class, mappedBy: 'post', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: PostPhoto::class, mappedBy: 'post', orphanRemoval: true, cascade: ['persist'])]
     private Collection $photos;
 
     /**

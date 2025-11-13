@@ -5,16 +5,19 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CulturePhotoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CulturePhotoRepository::class)]
 #[ApiResource]
 class CulturePhoto
 {
+    #[Groups(['culture:create'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['culture:create'])]
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 

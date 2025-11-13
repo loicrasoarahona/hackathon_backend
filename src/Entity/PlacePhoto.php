@@ -11,13 +11,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource]
 class PlacePhoto
 {
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['place:create'])]
+    #[Groups(['place:create', 'place:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 
