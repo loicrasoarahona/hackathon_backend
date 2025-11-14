@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+use OpenAI\Client;
+use OpenAI\Contracts\TransporterContract;
+
 #[Route('/ai')]
 class AiController extends AbstractController
 {
@@ -16,7 +19,7 @@ class AiController extends AbstractController
     public function testGpt()
     {
 
-        $apiKey = "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";
+        $apiKey = "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";
 
         $url = "https://api.openai.com/v1/chat/completions";
 
