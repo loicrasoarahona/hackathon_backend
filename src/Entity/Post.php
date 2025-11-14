@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['post:write']]),
+        new Get(normalizationContext: ['groups' => ['post:collection']]),
         new GetCollection(normalizationContext: ['groups' => ['post:collection']]),
         new \ApiPlatform\Metadata\Post(denormalizationContext: ['groups' => ['post:write']]),
         new Patch(),
