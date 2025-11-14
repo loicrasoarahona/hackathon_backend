@@ -1,4 +1,13 @@
+Options -MultiViews
 RewriteEngine On
 
-# Rediriger toutes les requêtes vers une URL de test
-RewriteRule ^.*$ https://example.com/test [R=302,L]
+# Si la requête est pour /uploads, ne rien faire
+RewriteCond %{REQUEST_URI} ^/uploads/
+RewriteRule ^ - [L]
+
+# Si le fichier ou dossier existe déjà, le servir directement
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Sinon, tout passer à index.php
+RewriteRule ^ index.php [QSA,L]
