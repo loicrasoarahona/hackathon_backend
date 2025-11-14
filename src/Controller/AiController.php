@@ -34,6 +34,8 @@ class AiController extends AbstractController
             "Authorization: Bearer $apiKey"
         ];
 
+        dd($data);
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
