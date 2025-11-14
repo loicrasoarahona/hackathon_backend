@@ -102,6 +102,8 @@ class AiController extends AbstractController
         // Convertir la réponse JSON en tableau PHP
         $result = json_decode($response, true);
 
+        return new JsonResponse($result);
+
         // Extraire le texte généré
         if (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
             echo "Texte généré : \n\n";
