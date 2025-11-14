@@ -1,5 +1,8 @@
 RewriteEngine On
 
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [L]
+
 # Rediriger toutes les requêtes vers /public
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteRule ^(.*)$ /public/$1 [L,R=302]
