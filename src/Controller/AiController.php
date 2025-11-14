@@ -144,12 +144,11 @@ class AiController extends AbstractController
 
         // 3. Catégories Cibles (pour la post-filtration)
         // C'est la liste de catégories que vous souhaitez *vérifier* dans les résultats.
-        $categories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
+        $targetCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
             ->select('category.name')
             ->getQuery()
             ->getSingleColumnResult();
 
-        dd($categories);
 
         // 4. Construction de la Requête JSON
         // La fonctionnalité 'LABEL_DETECTION' est utilisée pour la classification/étiquetage.

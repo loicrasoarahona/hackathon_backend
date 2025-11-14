@@ -34,6 +34,9 @@ class Province
     #[ORM\OneToMany(targetEntity: City::class, mappedBy: 'province')]
     private Collection $cities;
 
+    #[ORM\OneToOne(mappedBy: 'province', cascade: ['persist', 'remove'])]
+    private ?Dialect $dialect = null;
+
     public function __construct()
     {
         $this->cities = new ArrayCollection();
@@ -94,6 +97,23 @@ class Province
                 $city->setProvince(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDialect(): ?Dialect
+    {
+        return $this->dialect;
+    }
+
+    public function setDialect(Dialect $dialect): static
+    {
+        // set the owning side of the relation if necessary
+        if ($dialect->getProvince() !== $this) {
+            $dialect->setProvince($this);
+        }
+
+        $this->dialect = $dialect;
 
         return $this;
     }
