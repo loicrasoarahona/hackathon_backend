@@ -86,7 +86,7 @@ class CloudVisionService
                 $labels[] = $label['description'];
             }
 
-            return $label;
+            return $labels;
         }
 
         // Gestion des erreurs de l'API Cloud Vision
