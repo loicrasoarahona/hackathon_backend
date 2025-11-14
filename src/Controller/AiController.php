@@ -133,7 +133,7 @@ class AiController extends AbstractController
             die("Erreur : Le fichier image n'existe pas.");
         }
         $base64Image = base64_encode(file_get_contents($imagePath));
-        $mimeType = 'image/png'; // Assurez-vous que le type MIME correspond à votre image
+        $mimeType = 'image/jpeg'; // Assurez-vous que le type MIME correspond à votre image
 
         // 3. Vos Catégories Cibles Françaises
         $targetCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
