@@ -62,7 +62,7 @@ class AiController extends AbstractController
     #[Route('/test_google', methods: ['GET'])]
     public function testGoogle()
     {
-        $apiKey = "AIzaSyAYYmDBaB37pq9UeEaEqM-5Ag8qpS7J_HM";
+        $apiKey = "AIzaSyBEe6BmgXhQWSY5Jh9JBXX33id44pZM8sM";
 
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=$apiKey";
 
