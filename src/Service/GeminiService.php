@@ -15,7 +15,6 @@ class GeminiService
     {
         $geminiApiKey = $this->params->get('google_api_key');
 
-        dd($geminiApiKey);
 
         $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey;
 
