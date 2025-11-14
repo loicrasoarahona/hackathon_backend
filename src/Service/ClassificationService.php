@@ -42,7 +42,7 @@ class ClassificationService
         }
 
         $labelsToInsert = array_diff($labelsEn, array_keys($existingLabelsMap));
-
+        dd($labelsToInsert);
         $categoriesToLink = $existingCategories;
 
         if (!empty($labelsToInsert)) {
