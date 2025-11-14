@@ -51,14 +51,12 @@ class GeminiService
 
         $responseArray = json_decode($response, true);
 
-        dd($responseArray['candidates'][0]['content']['parts'][0]);
         // 3. Analyse de la Réponse
         if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
             $jsonText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
             dd($jsonText);
             // Tenter de décoder la chaîne JSON retournée par Gemini
             $translations = json_decode($jsonText, true);
-            dd($translations);
             if (json_last_error() === JSON_ERROR_NONE && is_array($translations)) {
                 $resultMap = [];
                 foreach ($translations as $item) {

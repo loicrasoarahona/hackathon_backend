@@ -56,13 +56,18 @@ class ClassificationService
                 // Récupérer la traduction à partir du tableau groupé
                 $labelFr = $bulkTranslations[$labelEn] ?? "Traduction manquante";
 
-                $newCategory = new \App\Entity\Category();
-                $newCategory->setLabelEn($labelEn);
-                $newCategory->setLabelFr($labelFr);
+                $newCategory = new PostPhotoCategory();
+                $newCategory->setName($labelEn);
+                $newCategory->setNameFr($labelFr);
 
-                $this->entityManager->persist($newCategory);
+                $this->em->persist($newCategory);
                 $categoriesToLink[] = $newCategory;
+
+                $photo->addCategory($newCategory);
             }
+
+            $this->em->persist($photo);
+            $this->em->flush();
         }
     }
 }
