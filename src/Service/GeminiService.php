@@ -11,7 +11,7 @@ class GeminiService
         private ParameterBagInterface $params
     ) {}
 
-    public function bulkTranslateWithGemini(array $labelsEn): array
+    public function bulkTranslate(array $labelsEn): array
     {
         $geminiApiKey = $this->params->get('google_api_key');
 
