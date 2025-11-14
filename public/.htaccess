@@ -1,4 +1,3 @@
-<IfModule mod_rewrite.c>
     Options -MultiViews
     RewriteEngine On
 
@@ -8,4 +7,3 @@
 
     # Le reste va à Symfony
     RewriteRule ^ index.php [QSA,L]
-</IfModule>
