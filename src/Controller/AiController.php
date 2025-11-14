@@ -121,7 +121,7 @@ class AiController extends AbstractController
     public function classifyImage(Request $request)
     {
         // 1. Configuration
-        $apiKey = "AIzaSyBEe6BmgXhQWSY5Jh9JBXX33id44pZM8sM"; // Utilisez votre clé Gemini ici
+        $apiKey = $this->getParameter('google_api_key'); // Utilisez votre clé Gemini ici
         $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $apiKey;
 
         // 2. Préparation de l'Image
