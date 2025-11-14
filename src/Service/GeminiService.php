@@ -76,8 +76,6 @@ class GeminiService
             }
         }
 
-        dd($translations);
-
         return $translations;
     }
 
