@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use OpenAI\Client;
 use OpenAI\Contracts\TransporterContract;
+use Symfony\Component\Config\Builder\Method;
 use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/ai')]
@@ -114,6 +115,7 @@ class AiController extends AbstractController
         }
     }
 
+    #[Route('/classif_image', methods: ['GET'])]
     public function classifyImage(Request $request)
     {
         // 1. Configuration
