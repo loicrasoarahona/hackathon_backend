@@ -115,7 +115,7 @@ class AiController extends AbstractController
         }
     }
 
-    #[Route('/classif_image', methods: ['GET'])]
+    #[Route('/classify_image', methods: ['GET'])]
     public function classifyImage(Request $request)
     {
         // 1. Configuration
