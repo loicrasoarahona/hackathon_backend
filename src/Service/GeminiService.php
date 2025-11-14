@@ -56,6 +56,7 @@ class GeminiService
             $jsonText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
             // Tenter de décoder la chaîne JSON retournée par Gemini
             $translations = json_decode($jsonText, true);
+            dd($translations);
             if (json_last_error() === JSON_ERROR_NONE && is_array($translations)) {
                 $resultMap = [];
                 foreach ($translations as $item) {
