@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class GeminiService
@@ -49,11 +50,10 @@ class GeminiService
         curl_close($ch);
 
         $responseArray = json_decode($response, true);
-        dd($responseArray);
         // 3. Analyse de la Réponse
         if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
             $jsonText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
-
+            dd($jsonText);
             // Tenter de décoder la chaîne JSON retournée par Gemini
             $translations = json_decode($jsonText, true);
             dd($translations);
@@ -72,6 +72,8 @@ class GeminiService
                 error_log("Gemini a retourné un JSON invalide: " . $jsonText);
                 return [];
             }
+        } else {
+            throw new Exception("Format de retour invalide");
         }
 
         return []; // En cas d'échec de la requête
