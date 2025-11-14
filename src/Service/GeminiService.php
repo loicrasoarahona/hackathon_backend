@@ -50,6 +50,8 @@ class GeminiService
 
         $responseArray = json_decode($response, true);
 
+        dd($responseArray);
+
         // 3. Analyse de la Réponse
         if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
             $jsonText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
