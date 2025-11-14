@@ -20,7 +20,6 @@ class PostPhotoListener
 
     public function postPersist(PostPhoto $photo, PostPersistEventArgs $args)
     {
-        dd("hello");
         // Chemin réel de l'image sur le système de fichiers
         $imagePath = $this->params->get('post_uploads_directory') . "/" . $photo->getFilename();
 
