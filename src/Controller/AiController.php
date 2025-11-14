@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\PostPhotoCategory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AiController extends AbstractController
 {
 
-    public function __construct() {}
+    public function __construct(private EntityManagerInterface $em) {}
 
     #[Route('/test_gpt', methods: ['GET'])]
     public function testGpt()
@@ -141,13 +143,12 @@ class AiController extends AbstractController
 
         // 3. Catégories Cibles (pour la post-filtration)
         // C'est la liste de catégories que vous souhaitez *vérifier* dans les résultats.
-        $targetCategories = [
-            "Dog",        // Chien
-            "Cat",        // Chat
-            "Car",        // Voiture
-            "Mountain",   // Montagne
-            "Tree"        // Arbre
-        ];
+        $categories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
+            ->select('category.name')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        dd($categories);
 
         // 4. Construction de la Requête JSON
         // La fonctionnalité 'LABEL_DETECTION' est utilisée pour la classification/étiquetage.
