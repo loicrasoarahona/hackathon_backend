@@ -21,6 +21,7 @@ class ClassificationService
         // La fonction dans CloudVisionService doit retourner un tableau de chaînes (labels EN)
         $labelsEn = $this->cloudVisionService->getLabels($imagePath);
 
+        dd($labelsEn);
         if (empty($labelsEn)) {
             // Si aucun label n'est trouvé, on arrête le processus
             return;
@@ -42,7 +43,6 @@ class ClassificationService
         }
 
         $labelsToInsert = array_diff($labelsEn, array_keys($existingLabelsMap));
-        dd($labelsToInsert);
         $categoriesToLink = $existingCategories;
 
         if (!empty($labelsToInsert)) {
