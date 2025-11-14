@@ -44,7 +44,7 @@ class AiController extends AbstractController
 
         if (curl_errno($ch)) {
             echo 'Erreur cURL : ' . curl_error($ch);
-            return new JsonResponse(curl_error($ch), 500);
+            return new JsonResponse(['message' => 'Erreur', 'error' => curl_error($ch)], 500);
         } else {
             $result = json_decode($response, true);
             // dd($result);
