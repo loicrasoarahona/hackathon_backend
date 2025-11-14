@@ -19,6 +19,10 @@ class DialectPage
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
+    #[ORM\ManyToOne(inversedBy: 'pages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Dialect $dialect = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -32,6 +36,18 @@ class DialectPage
     public function setContent(string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getDialect(): ?Dialect
+    {
+        return $this->dialect;
+    }
+
+    public function setDialect(?Dialect $dialect): static
+    {
+        $this->dialect = $dialect;
 
         return $this;
     }

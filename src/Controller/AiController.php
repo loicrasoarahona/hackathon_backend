@@ -128,12 +128,12 @@ class AiController extends AbstractController
         $filename = $request->query->get('filename');
         if (empty($filename))
             return new JsonResponse("Empty filename", 400);
-        $imagePath = $this->getParameter('post_uploads_directory') . $filename;
+        $imagePath = $this->getParameter('post_uploads_directory') . "/" . $filename;
         if (!file_exists($imagePath)) {
             die("Erreur : Le fichier image n'existe pas.");
         }
         $base64Image = base64_encode(file_get_contents($imagePath));
-        $mimeType = 'image/jpeg'; // Assurez-vous que le type MIME correspond à votre image
+        $mimeType = 'image/png'; // Assurez-vous que le type MIME correspond à votre image
 
         // 3. Vos Catégories Cibles Françaises
         $targetCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
