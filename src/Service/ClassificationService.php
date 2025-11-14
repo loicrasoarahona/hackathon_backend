@@ -51,8 +51,6 @@ class ClassificationService
                 array_values($labelsToInsert) // Assurez-vous d'envoyer uniquement les valeurs
             );
 
-            dd($bulkTranslations);
-
             // Traiter et insérer les nouveaux labels
             foreach ($labelsToInsert as $labelEn) {
                 // Récupérer la traduction à partir du tableau groupé
