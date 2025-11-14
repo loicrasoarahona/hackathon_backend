@@ -21,6 +21,8 @@ class GeminiService
         // 1. Préparation du Prompt
         $inputList = json_encode($labelsEn); // Encoder la liste d'entrée en JSON pour clarté
 
+        dd($inputList);
+
         // Instruction : Demander un retour JSON spécifique
         $prompt = <<<PROMPT
     Vous êtes un traducteur expert. Traduisez les termes français de la liste suivante.
