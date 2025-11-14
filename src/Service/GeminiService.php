@@ -34,7 +34,7 @@ class GeminiService
             'contents' => [['parts' => [['text' => $prompt]]]],
             'generationConfig' => [
                 'temperature' => 0.0, // Toujours 0.0 pour une tâche factuelle/de traduction
-                'maxOutputTokens' => 512 // Augmenter la limite pour la liste
+                'maxOutputTokens' => 2000  // Augmenter la limite pour la liste
             ]
             // Nous n'utilisons pas le champ 'responseMimeType' car il n'est pas disponible dans l'API REST v1beta.
         ];
