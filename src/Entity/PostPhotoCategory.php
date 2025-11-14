@@ -37,6 +37,7 @@ class PostPhotoCategory
     #[ORM\Column]
     private ?bool $isDisplayable = null;
 
+    #[Groups(['post:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $nameFr = null;
 
