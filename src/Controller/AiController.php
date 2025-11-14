@@ -167,7 +167,7 @@ class AiController extends AbstractController
             // Configuration pour une réponse courte et précise
             'generationConfig' => [
                 'temperature' => 0.0,
-                'maxOutputTokens' => 100
+                'maxOutputTokens' => 512
             ]
         ];
         $json_data = json_encode($requestData);
