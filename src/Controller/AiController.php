@@ -34,7 +34,6 @@ class AiController extends AbstractController
             "Authorization: Bearer $apiKey"
         ];
 
-        dd($data);
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -50,8 +49,8 @@ class AiController extends AbstractController
         } else {
             $result = json_decode($response, true);
             // dd($result);
-            // $retour = $result["choices"][0]["message"]["content"];
-            return new JsonResponse($result);
+            $retour = $result["choices"][0]["message"]["content"];
+            return new JsonResponse($retour);
         }
 
         curl_close($ch);
