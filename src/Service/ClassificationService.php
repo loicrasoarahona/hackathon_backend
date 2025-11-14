@@ -59,6 +59,7 @@ class ClassificationService
                 $newCategory = new PostPhotoCategory();
                 $newCategory->setName($labelEn);
                 $newCategory->setNameFr($labelFr);
+                $newCategory->setIsDisplayable(false);
 
                 $this->em->persist($newCategory);
                 $categoriesToLink[] = $newCategory;
