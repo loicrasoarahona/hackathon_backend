@@ -21,8 +21,6 @@ class GeminiService
         // 1. Préparation du Prompt
         $inputList = json_encode($labelsEn); // Encoder la liste d'entrée en JSON pour clarté
 
-        dd($inputList);
-
         // Instruction : Demander un retour JSON spécifique
         $prompt = <<<PROMPT
     Vous êtes un traducteur expert. Traduisez les termes français de la liste suivante.
@@ -52,14 +50,13 @@ class GeminiService
 
         $responseArray = json_decode($response, true);
 
-        dd($response);
         // 3. Analyse de la Réponse
         if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
             $jsonText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
 
             // Tenter de décoder la chaîne JSON retournée par Gemini
             $translations = json_decode($jsonText, true);
-
+            dd($translations);
             if (json_last_error() === JSON_ERROR_NONE && is_array($translations)) {
                 $resultMap = [];
                 foreach ($translations as $item) {
