@@ -29,11 +29,16 @@ class ClassificationService
         // 2. IDENTIFICATION ET TRADUCTION/INSERTION DES CATÉGORIES
 
         // Récupère les catégories existantes par leur label_en
-        $existingCategories = $this->em->getRepository(PostPhotoCategory::class)->findBy(['name' => $labelsEn]);;
+        $existingCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
+            ->where('LOWER(category.name) IN (:names)')
+            ->setParameter('names', array_map('strtolower', $labelsEn))
+            ->getQuery()
+            ->getResult();
         $existingLabelsMap = [];
+
         /** @var \App\Entity\Category $category */
         foreach ($existingCategories as $category) {
-            $existingLabelsMap[$category->getLabelEn()] = $category;
+            $existingLabelsMap[$category->getName()] = $category;
         }
 
         $labelsToInsert = array_diff($labelsEn, array_keys($existingLabelsMap));
