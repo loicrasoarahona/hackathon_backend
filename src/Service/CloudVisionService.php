@@ -61,7 +61,7 @@ class CloudVisionService
                     'features' => [
                         [
                             'type' => 'LABEL_DETECTION',
-                            'maxResults' => 10 // Limite à 10 classifications
+                            'maxResults' => 20 // Limite à 10 classifications
                         ]
                     ]
                 ]
