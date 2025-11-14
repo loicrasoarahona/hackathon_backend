@@ -85,9 +85,6 @@ class CloudVisionService
             foreach ($responseArray['responses'][0]['labelAnnotations'] as $label) {
                 $labels[] = $label['description'];
             }
-
-            dd($labels);
-            return $labels;
         }
 
         // Gestion des erreurs de l'API Cloud Vision
