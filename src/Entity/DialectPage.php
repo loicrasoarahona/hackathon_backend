@@ -6,16 +6,19 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\DialectPageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DialectPageRepository::class)]
 #[ApiResource]
 class DialectPage
 {
+    #[Groups(['dialect:create'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['dialect:create'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 

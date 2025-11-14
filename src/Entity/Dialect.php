@@ -3,28 +3,47 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\DialectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DialectRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['dialect:create']]),
+        new GetCollection(normalizationContext: ['groups' => ['dialect:create']]),
+        new Post(denormalizationContext: ['groups' => ['dialect:create']]),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ]
+)]
 class Dialect
 {
+    #[Groups(['dialect:create'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['dialect:create'])]
     #[ORM\OneToOne(inversedBy: 'dialect', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Province $province = null;
 
+    #[Groups(['dialect:create'])]
     /**
      * @var Collection<int, DialectPage>
      */
-    #[ORM\OneToMany(targetEntity: DialectPage::class, mappedBy: 'dialect')]
+    #[ORM\OneToMany(targetEntity: DialectPage::class, mappedBy: 'dialect', cascade: ['persist'])]
     private Collection $pages;
 
     public function __construct()
