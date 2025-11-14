@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['dialect:create']]),
-        new GetCollection(normalizationContext: ['groups' => ['dialect:create']]),
+        new GetCollection(normalizationContext: ['groups' => ['dialect:collection']]),
         new Post(denormalizationContext: ['groups' => ['dialect:create']]),
         new Put(),
         new Patch(),
@@ -28,18 +28,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Dialect
 {
-    #[Groups(['dialect:create'])]
+    #[Groups(['dialect:create', 'dialect:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['dialect:create'])]
+    #[Groups(['dialect:create', 'dialect:collection'])]
     #[ORM\OneToOne(inversedBy: 'dialect', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Province $province = null;
 
-    #[Groups(['dialect:create'])]
+    #[Groups(['dialect:create', 'dialect:collection'])]
     /**
      * @var Collection<int, DialectPage>
      */

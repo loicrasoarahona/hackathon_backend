@@ -64,11 +64,17 @@ class ClassificationService
                 $this->em->persist($newCategory);
                 $categoriesToLink[] = $newCategory;
 
+                // lier les nouvelles categories
                 $photo->addCategory($newCategory);
             }
-
-            $this->em->persist($photo);
-            $this->em->flush();
         }
+
+        // lier les categories existantes
+        foreach ($existingCategories as $existing) {
+            $photo->addCategory($existing);
+        }
+
+        $this->em->persist($photo);
+        $this->em->flush();
     }
 }

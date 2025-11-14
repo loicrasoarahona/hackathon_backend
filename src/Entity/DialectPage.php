@@ -12,13 +12,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource]
 class DialectPage
 {
-    #[Groups(['dialect:create'])]
+    #[Groups(['dialect:create', 'dialect:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['dialect:create'])]
+    #[Groups(['dialect:create', 'dialect:collection'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 

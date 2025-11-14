@@ -14,17 +14,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Province
 {
 
-    #[Groups(['city:collection'])]
+    #[Groups(['city:collection', 'dialect:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['city:collection'])]
+    #[Groups(['city:collection', 'dialect:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['city:collection'])]
+    #[Groups(['city:collection', 'dialect:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
