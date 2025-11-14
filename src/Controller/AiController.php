@@ -214,6 +214,7 @@ class AiController extends AbstractController
             echo $responseArray['error']['message'] . "\n";
         } else {
             echo "## Erreur Inconnue (Réponse complète) :\n";
+            dd($responseArray);
             print_r($responseArray);
         }
     }
