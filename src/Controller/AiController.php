@@ -49,8 +49,8 @@ class AiController extends AbstractController
         } else {
             $result = json_decode($response, true);
             // dd($result);
-            $retour = $result["choices"][0]["message"]["content"];
-            return new JsonResponse($retour);
+            // $retour = $result["choices"][0]["message"]["content"];
+            return new JsonResponse($result);
         }
 
         curl_close($ch);
