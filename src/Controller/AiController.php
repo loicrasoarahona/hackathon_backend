@@ -130,9 +130,10 @@ class AiController extends AbstractController
 
         // 2. Préparation de l'Image
         // Chemin vers votre image locale
-        $imagePath = $request->query->get('filepath');
-        if (empty($imagePath))
-            return new JsonResponse("empty filepath", 400);
+        if (empty($request->query->get('filename')))
+            return new JsonResponse("empty filename", 400);
+        $imagePath = $this->getParameter('post_uploads_directory') + "/" + $request->query->get('filename');
+
 
         // Lecture et encodage de l'image en Base64
         if (!file_exists($imagePath)) {
