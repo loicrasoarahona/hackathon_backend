@@ -121,56 +121,58 @@ class AiController extends AbstractController
     public function classifyImage(Request $request)
     {
         // 1. Configuration
-        // Assurez-vous d'avoir configuré l'authentification appropriée pour Cloud Vision.
-        // L'approche la plus courante est d'utiliser un jeton d'accès OAuth2.
-        // Pour les tests rapides, vous pouvez utiliser une clé API, mais ce n'est PAS recommandé
-        // pour la production. Remplacez par votre clé ou votre jeton.
-        $apiKey = "AIzaSyBEe6BmgXhQWSY5Jh9JBXX33id44pZM8sM";
-        $apiUrl = "https://vision.googleapis.com/v1/images:annotate?key=" . $apiKey;
+        $apiKey = "AIzaSyBEe6BmgXhQWSY5Jh9JBXX33id44pZM8sM"; // Utilisez votre clé Gemini ici
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $apiKey;
 
         // 2. Préparation de l'Image
-        // Chemin vers votre image locale
-        if (empty($request->query->get('filename')))
-            return new JsonResponse("empty filename", 400);
-        $imagePath = $this->getParameter('post_uploads_directory') . "/" . $request->query->get('filename');
-
-
-        // Lecture et encodage de l'image en Base64
+        $filename = $request->query->get('filename');
+        if (empty($filename))
+            return new JsonResponse("Empty filename", 400);
+        $imagePath = $this->getParameter('post_uploads_directory') . $filename;
         if (!file_exists($imagePath)) {
-            die("Erreur : Le fichier image n'existe pas à l'emplacement spécifié.");
+            die("Erreur : Le fichier image n'existe pas.");
         }
-        $imageData = file_get_contents($imagePath);
-        $base64Image = base64_encode($imageData);
+        $base64Image = base64_encode(file_get_contents($imagePath));
+        $mimeType = 'image/jpeg'; // Assurez-vous que le type MIME correspond à votre image
 
-        // 3. Catégories Cibles (pour la post-filtration)
-        // C'est la liste de catégories que vous souhaitez *vérifier* dans les résultats.
+        // 3. Vos Catégories Cibles Françaises
         $targetCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
             ->select('category.name')
             ->getQuery()
             ->getSingleColumnResult();
 
+        // Création du prompt avec les instructions précises
+        $targetList = implode(", ", $targetCategories);
+        $prompt = "Voici une image. Veuillez choisir **uniquement** les catégories de la liste suivante qui décrivent le mieux ce que vous voyez, en vous basant sur votre confiance (Ne répondez qu'avec la ou les catégories, séparées par des virgules, sans autre texte ou explication) : " . $targetList;
 
-        // 4. Construction de la Requête JSON
-        // La fonctionnalité 'LABEL_DETECTION' est utilisée pour la classification/étiquetage.
-        // 'maxResults' limite le nombre de labels retournés.
+        // 4. Construction de la Requête JSON (Multimodale)
         $requestData = [
-            'requests' => [
+            'contents' => [
                 [
-                    'image' => [
-                        'content' => $base64Image // L'image encodée
-                    ],
-                    'features' => [
+                    'parts' => [
+                        // Partie 1: L'Image
                         [
-                            'type' => 'LABEL_DETECTION',
-                            'maxResults' => 10 // Récupère jusqu'à 10 labels
+                            'inlineData' => [
+                                'mimeType' => $mimeType,
+                                'data' => $base64Image
+                            ]
+                        ],
+                        // Partie 2: Le Texte (Instructions + Catégories)
+                        [
+                            'text' => $prompt
                         ]
                     ]
                 ]
+            ],
+            // Configuration pour une réponse courte et précise
+            'config' => [
+                'temperature' => 0.0, // Température basse pour une réponse factuelle
+                'maxOutputTokens' => 100 // Limite la longueur de la réponse
             ]
         ];
         $json_data = json_encode($requestData);
 
-        // 5. Appel cURL
+        // 5. Appel cURL (Identique à l'API Texte)
         $ch = curl_init($apiUrl);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -190,47 +192,28 @@ class AiController extends AbstractController
         // 6. Traitement de la Réponse
         $responseArray = json_decode($response, true);
 
-        echo "## Résultats de la Classification Cloud Vision :\n";
-        echo "Image analysée : **" . basename($imagePath) . "**\n\n";
+        echo "## Classification Multimodale avec Gemini :\n";
+        echo "Liste de catégories cibles (Français) : **" . $targetList . "**\n\n";
 
-        if (isset($responseArray['responses'][0]['labelAnnotations'])) {
-            $labels = $responseArray['responses'][0]['labelAnnotations'];
-            $foundMatches = [];
 
-            echo "### Labels détectés par l'API :\n";
-            foreach ($labels as $label) {
-                $description = $label['description'];
-                // Formatage du score à 2 décimales pour l'affichage
-                $score = number_format($label['score'], 2);
+        if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
+            $generatedText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
 
-                echo "* **" . $description . "** (Confiance: " . $score . ")\n";
+            echo "### ✅ Catégories correspondantes choisies par l'IA :\n";
 
-                // 7. Post-Filtration selon vos catégories cibles
-                // On vérifie si le label détecté est dans notre liste cible (en ignorant la casse pour plus de flexibilité)
-                if (in_array(ucfirst(strtolower($description)), array_map('ucfirst', array_map('strtolower', $targetCategories)))) {
-                    $foundMatches[] = [
-                        'category' => $description,
-                        'score' => $score
-                    ];
+            // Le texte retourné devrait être une liste de catégories séparées par des virgules
+            $results = array_map('trim', explode(',', $generatedText));
+
+            foreach ($results as $result) {
+                if (!empty($result)) {
+                    echo "* **" . $result . "**\n";
                 }
-            }
-
-            echo "\n---\n";
-
-            // Affichage des correspondances
-            if (!empty($foundMatches)) {
-                echo "### ✅ Correspondances trouvées dans votre liste cible (" . count($foundMatches) . ") :\n";
-                foreach ($foundMatches as $match) {
-                    echo "* Catégorie cible : **" . $match['category'] . "** (Confiance: " . $match['score'] . ")\n";
-                }
-            } else {
-                echo "### ❌ Aucune des catégories cibles n'a été trouvée avec une haute confiance.\n";
             }
         } elseif (isset($responseArray['error']['message'])) {
-            echo "## Erreur de l'API Cloud Vision :\n";
+            echo "## Erreur de l'API Gemini :\n";
             echo $responseArray['error']['message'] . "\n";
         } else {
-            echo "## Erreur Inconnue :\n";
+            echo "## Erreur Inconnue (Réponse complète) :\n";
             print_r($responseArray);
         }
     }
