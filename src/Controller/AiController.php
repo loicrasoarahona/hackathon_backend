@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\PostPhoto;
 use App\Entity\PostPhotoCategory;
+use App\Service\ClassificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +19,10 @@ use Symfony\Component\HttpFoundation\Request;
 class AiController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ClassificationService $classificationService
+    ) {}
 
     #[Route('/test_gpt', methods: ['GET'])]
     public function testGpt()
@@ -117,105 +122,20 @@ class AiController extends AbstractController
         }
     }
 
-    #[Route('/classify_image', methods: ['GET'])]
-    public function classifyImage(Request $request)
+    #[Route('/classify_image/{post_photo_id}', methods: ['GET'])]
+    public function classifyImage(Request $request, int $post_photo_id)
     {
-        // 1. Configuration
-        $apiKey = $this->getParameter('google_api_key'); // Utilisez votre clé Gemini ici
-        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $apiKey;
+        $postPhoto = $this->em->getRepository(PostPhoto::class)->find($post_photo_id);
 
-        // 2. Préparation de l'Image
-        $filename = $request->query->get('filename');
-        if (empty($filename))
-            return new JsonResponse("Empty filename", 400);
-        $imagePath = $this->getParameter('post_uploads_directory') . "/" . $filename;
-        if (!file_exists($imagePath)) {
-            die("Erreur : Le fichier image n'existe pas.");
-        }
-        $base64Image = base64_encode(file_get_contents($imagePath));
-        $mimeType = 'image/jpeg'; // Assurez-vous que le type MIME correspond à votre image
-
-        // 3. Vos Catégories Cibles Françaises
-        $targetCategories = $this->em->getRepository(PostPhotoCategory::class)->createQueryBuilder('category')
-            ->select('category.name')
-            ->getQuery()
-            ->getSingleColumnResult();
-
-        // Création du prompt avec les instructions précises
-        $targetList = implode(", ", $targetCategories);
-        $prompt = "Voici une image. Veuillez choisir **uniquement** les catégories de la liste suivante qui décrivent le mieux ce que vous voyez, en vous basant sur votre confiance (Ne répondez qu'avec la ou les catégories, séparées par des virgules, sans autre texte ou explication) : " . $targetList;
-
-        // 4. Construction de la Requête JSON (Multimodale)
-        $requestData = [
-            'contents' => [
-                [
-                    'parts' => [
-                        // Partie 1: L'Image
-                        [
-                            'inlineData' => [
-                                'mimeType' => $mimeType,
-                                'data' => $base64Image
-                            ]
-                        ],
-                        // Partie 2: Le Texte (Instructions + Catégories)
-                        [
-                            'text' => $prompt
-                        ]
-                    ]
-                ]
-            ],
-            // Configuration pour une réponse courte et précise
-            'generationConfig' => [
-                'temperature' => 0.0,
-                'maxOutputTokens' => 256
-            ]
-        ];
-        $json_data = json_encode($requestData);
-
-        // 5. Appel cURL (Identique à l'API Texte)
-        $ch = curl_init($apiUrl);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
-
-        $response = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            echo 'Erreur cURL : ' . curl_error($ch);
-            exit;
+        if (!$postPhoto) {
+            return new JsonResponse("Entité introuvable", 404);
         }
 
-        curl_close($ch);
+        // Chemin réel de l'image sur le système de fichiers
+        $imagePath = $this->getParameter('post_uploads_directory') . "/" . $postPhoto->getFilename();
 
-        // 6. Traitement de la Réponse
-        $responseArray = json_decode($response, true);
+        $this->classificationService->classifyAndLinkPhoto($postPhoto, $imagePath);
 
-        echo "## Classification Multimodale avec Gemini :\n";
-        echo "Liste de catégories cibles (Français) : **" . $targetList . "**\n\n";
-
-
-        if (isset($responseArray['candidates'][0]['content']['parts'][0]['text'])) {
-            $generatedText = trim($responseArray['candidates'][0]['content']['parts'][0]['text']);
-
-            echo "### ✅ Catégories correspondantes choisies par l'IA :\n";
-
-            // Le texte retourné devrait être une liste de catégories séparées par des virgules
-            $results = array_map('trim', explode(',', $generatedText));
-
-            foreach ($results as $result) {
-                if (!empty($result)) {
-                    echo "* **" . $result . "**\n";
-                }
-            }
-        } elseif (isset($responseArray['error']['message'])) {
-            echo "## Erreur de l'API Gemini :\n";
-            echo $responseArray['error']['message'] . "\n";
-        } else {
-            echo "## Erreur Inconnue (Réponse complète) :\n";
-            dd($responseArray);
-            print_r($responseArray);
-        }
+        return new JsonResponse(['message' => "classification avec succès"]);
     }
 }

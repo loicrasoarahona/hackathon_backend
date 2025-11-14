@@ -34,6 +34,9 @@ class PostPhotoCategory
     #[ORM\Column]
     private ?bool $isDisplayable = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nameFr = null;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
@@ -91,6 +94,18 @@ class PostPhotoCategory
     public function setIsDisplayable(bool $isDisplayable): static
     {
         $this->isDisplayable = $isDisplayable;
+
+        return $this;
+    }
+
+    public function getNameFr(): ?string
+    {
+        return $this->nameFr;
+    }
+
+    public function setNameFr(string $nameFr): static
+    {
+        $this->nameFr = $nameFr;
 
         return $this;
     }
