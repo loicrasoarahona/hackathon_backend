@@ -19,7 +19,7 @@ class AiController extends AbstractController
     public function testGpt()
     {
 
-        $apiKey = "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";
+        $apiKey = "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";
 
         $url = "https://api.openai.com/v1/chat/completions";
 
