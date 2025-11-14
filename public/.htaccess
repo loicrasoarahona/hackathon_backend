@@ -1,16 +1,10 @@
-Options -MultiViews
 RewriteEngine On
 
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule ^(.*)$ $1 [L]
-
-# Si la requête est pour /uploads, ne rien faire
-RewriteCond %{REQUEST_URI} ^/uploads/
-RewriteRule ^ - [L]
-
-# Si le fichier ou dossier existe déjà, le servir directement
+# Redirection vers index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
 
-# Sinon, tout passer à index.php
+# Passer les requêtes OPTIONS pour CORS
+RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^ index.php [QSA,L]

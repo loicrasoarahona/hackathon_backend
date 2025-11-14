@@ -1,9 +1,11 @@
 RewriteEngine On
 
+# Redirection vers public sauf pour les fichiers existants
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Passer les requêtes OPTIONS sans redirection
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ $1 [L]
-
-# Rediriger toutes les requêtes vers /public
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteRule ^(.*)$ /public/$1 [L,R=302]
-
