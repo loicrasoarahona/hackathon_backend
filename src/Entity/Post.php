@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['post:write']]),
-        new GetCollection(normalizationContext: ['groups' => ['post:write']]),
+        new GetCollection(normalizationContext: ['groups' => ['post:collection']]),
         new \ApiPlatform\Metadata\Post(denormalizationContext: ['groups' => ['post:write']]),
         new Patch(),
         new Put(),
@@ -27,28 +27,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Post
 {
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: true)]
     private ?City $city = null;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Place $place = null;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     /**
      * @var Collection<int, PostPhoto>
      */
