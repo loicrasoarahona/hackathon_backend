@@ -18,7 +18,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiFilter(SearchFilter::class, properties: ['city.province' => 'exact', 'name' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['cities.province' => 'exact', 'name' => 'partial'])]
 #[ORM\Entity(repositoryClass: CultureRepository::class)]
 #[ApiResource(
     operations: [
