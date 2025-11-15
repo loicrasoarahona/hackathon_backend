@@ -61,6 +61,9 @@ class Post
     #[ORM\ManyToMany(targetEntity: User::class)]
     private Collection $likes;
 
+    #[ORM\Column]
+    private ?\DateTime $date = null;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
@@ -158,6 +161,18 @@ class Post
     public function removeLike(User $like): static
     {
         $this->likes->removeElement($like);
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTime $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }
