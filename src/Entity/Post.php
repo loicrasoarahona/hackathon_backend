@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiFilter(SearchFilter::class, properties: ['photos.categories.name' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['photos.categories.nameFr' => 'partial'])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
