@@ -9,11 +9,13 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\Repository\PostRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
     operations: [
@@ -63,6 +65,12 @@ class Post
 
     #[ORM\Column]
     private ?\DateTime $date = null;
+
+    #[ORM\PrePersist]
+    public function setDefaultDate()
+    {
+        $this->date = new DateTime();
+    }
 
     public function __construct()
     {
