@@ -31,13 +31,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class City
 {
-    #[Groups(['city:collection', 'place:collection'])]
+    #[Groups(['city:collection', 'place:collection', 'post:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['city:collection', 'place:collection'])]
+    #[Groups(['city:collection', 'place:collection', 'post:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

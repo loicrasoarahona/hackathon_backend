@@ -29,17 +29,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Place
 {
-    #[Groups(['place:create', 'place:collection'])]
+    #[Groups(['place:create', 'place:collection', 'post:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['place:create', 'place:collection'])]
+    #[Groups(['place:create', 'place:collection', 'post:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['place:create', 'place:collection'])]
+    #[Groups(['place:create', 'place:collection', 'post:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 

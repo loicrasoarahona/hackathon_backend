@@ -39,11 +39,11 @@ class PostPhoto
     #[ORM\ManyToMany(targetEntity: PostPhotoCategory::class, inversedBy: 'photos')]
     private Collection $categories;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
-    #[Groups(['post:write'])]
+    #[Groups(['post:write', 'post:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationLabel = null;
 
